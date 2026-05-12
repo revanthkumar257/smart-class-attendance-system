@@ -9,29 +9,52 @@ class Train:
     def __init__(self, root):
         self.root = root
         self.root.geometry("1530x790+0+0")
-        self.root.title("Face Recognition System")
+        self.root.title("Train Dataset - Smart Class Attendance")
+        self.root.configure(bg="#F3F4F6")
 
-        # Load and resize images with specific dimensions
-        self.photoimg1 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\face1.jpeg", (500, 130))
-        self.photoimg2 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\face2.jpeg", (500, 130))
-        self.photoimg3 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\face 3.jpeg", (530, 130))
-        self.photoimg_bg = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\main2.jpg", (1530, 710))
+        base_dir = os.path.dirname(__file__)
+        img_dir = os.path.join(base_dir, "images", "images")
 
-        # Display header images
-        if self.photoimg1:
-            Label(self.root, image=self.photoimg1).place(x=0, y=0, width=500, height=130)
-        if self.photoimg2:
-            Label(self.root, image=self.photoimg2).place(x=500, y=0, width=500, height=130)
-        if self.photoimg3:
-            Label(self.root, image=self.photoimg3).place(x=1000, y=0, width=530, height=130)
+        # Header Frame
+        header_frame = Frame(self.root, bg="#1F2937")
+        header_frame.place(x=0, y=0, relwidth=1, height=80)
 
-        # Display background image
-        bg_img = Label(self.root, image=self.photoimg_bg)
-        bg_img.place(x=0, y=130, width=1530, height=710)
+        # Title label
+        title_lbl = Label(header_frame, text="TRAIN DATASET", font=("Helvetica", 28, "bold"), bg="#1F2937", fg="white")
+        title_lbl.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-        # Title label and button
-        title_lbl = Button(bg_img, text="TRAIN DATA SET", command=self.train_classifier, cursor="hand2", font=("times new roman", 35, "bold"), bg="white", fg="red")
-        title_lbl.place(x=0, y=0, width=1530, height=45)
+        # Main Card Frame
+        card_frame = Frame(self.root, bg="white", highlightbackground="#D1D5DB", highlightthickness=1)
+        card_frame.place(relx=0.5, rely=0.5, anchor=CENTER, width=700, height=500)
+        
+        # Add a top border color accent to the card
+        accent = Frame(card_frame, bg="#8B5CF6") # Purple accent
+        accent.place(x=0, y=0, relwidth=1, height=8)
+
+        # Display images nicely inside the card or just use one main graphic
+        try:
+            # Load a graphic for the training
+            img = Image.open(os.path.join(img_dir, "8.jpeg")) # The graphic from face recognition works here too or main2.jpg
+            img = img.resize((300, 200), Image.LANCZOS)
+            self.photoimg = ImageTk.PhotoImage(img)
+            
+            img_lbl = Label(card_frame, image=self.photoimg, bg="white", bd=0)
+            img_lbl.place(relx=0.5, y=140, anchor=CENTER)
+        except:
+            pass
+
+        # Text explanation
+        desc_title = Label(card_frame, text="Machine Learning Model", font=("Helvetica", 24, "bold"), fg="#111827", bg="white")
+        desc_title.place(relx=0.5, y=280, anchor=CENTER)
+
+        desc = "Train the face recognition model with the collected student datasets.\nThis process might take a few minutes depending on the data size."
+        desc_lbl = Label(card_frame, text=desc, font=("Helvetica", 12), fg="#4B5563", bg="white", justify=CENTER)
+        desc_lbl.place(relx=0.5, y=340, anchor=CENTER)
+
+        # Train Button
+        train_btn = Button(card_frame, text="Start Training", command=self.train_classifier, font=("Helvetica", 16, "bold"),
+                           bg="#8B5CF6", fg="white", activebackground="#7C3AED", activeforeground="white", cursor="hand2", bd=0)
+        train_btn.place(relx=0.5, y=420, anchor=CENTER, width=300, height=50)
 
     def load_image(self, path, size):
         try:
@@ -39,7 +62,6 @@ class Train:
             img = img.resize(size, Image.LANCZOS)
             return ImageTk.PhotoImage(img)
         except Exception as e:
-            messagebox.showerror("Error", f"Unable to load image at {path}\n{str(e)}")
             return None
 
     def train_classifier(self):
@@ -65,7 +87,7 @@ class Train:
                 # Ensure file has a valid naming convention
                 filename = os.path.split(image)[1]
                 if filename.count('.') < 2:
-                    raise ValueError(f"Invalid filename format: {filename}")
+                    continue
                 
                 id = int(filename.split('.')[1])  # Extract ID from filename
 
@@ -77,7 +99,6 @@ class Train:
                 cv2.waitKey(10)
 
             except Exception as e:
-                messagebox.showwarning("Warning", f"Skipping image {image}\n{str(e)}")
                 continue
         
         if len(faces) == 0:
@@ -96,7 +117,7 @@ class Train:
             cv2.destroyAllWindows()
 
             # Show a success message
-            messagebox.showinfo("Result", "Training datasets completed!!")
+            messagebox.showinfo("Result", "Training completed successfully!")
         except Exception as e:
             messagebox.showerror("Error", f"Error during training: {str(e)}")
 

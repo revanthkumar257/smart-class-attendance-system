@@ -5,6 +5,10 @@ from tkinter import StringVar
 import os
 from tkinter import filedialog
 import mysql.connector
+
+
+
+
 import csv
 
 
@@ -22,11 +26,15 @@ class Attendance:
         self.var_date = StringVar()
         self.var_status = StringVar()
 
+        import os
+        base_dir = os.path.dirname(__file__)
+        img_dir = os.path.join(base_dir, "images", "images")
+        
         # Load and resize images
-        self.photoimg1 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\BTP NANDINI\smart-class-attendence-system\images\images\1.jpg", (500, 130))
-        self.photoimg2 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\BTP NANDINI\smart-class-attendence-system\images\images\2.jpeg", (500, 130))
-        self.photoimg3 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\BTP NANDINI\smart-class-attendence-system\images\images\3.jpeg", (500, 130))
-        self.photoimg_bg = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\BTP NANDINI\smart-class-attendence-system\images\images\dev.png", (1530, 710))
+        self.photoimg1 = self.load_image(os.path.join(img_dir, "1.jpg"), (500, 130))
+        self.photoimg2 = self.load_image(os.path.join(img_dir, "2.jpeg"), (500, 130))
+        self.photoimg3 = self.load_image(os.path.join(img_dir, "3.jpeg"), (500, 130))
+        self.photoimg_bg = self.load_image(os.path.join(img_dir, "dev.png"), (1530, 710))
 
         # Display header images if loaded successfully
         if self.photoimg1:
@@ -42,54 +50,54 @@ class Attendance:
             bg_img.place(x=0, y=130, width=1530, height=710)
 
         # Title label
-        title_lbl = Label(bg_img, text="ATTENDANCE MANAGEMENT SYSTEM", font=("times new roman", 35, "bold"), bg="white", fg="red")
+        title_lbl = Label(bg_img, text="ATTENDANCE MANAGEMENT SYSTEM", font=("Helvetica", 35, "bold"), bg="white", fg="red")
         title_lbl.place(x=0, y=0, width=1530, height=45)
 
-        left_frame = LabelFrame(self.root, bd=2, relief=RIDGE, text="Student Attendance Details",
-                                font=("times new roman", 12, "bold"), fg="black", bg="white")
+        left_frame = LabelFrame(self.root, bd=2, relief=SOLID, text="Student Attendance Details",
+                                font=("Helvetica", 12, "bold"), fg="black", bg="white")
         left_frame.place(x=10, y=180, width=650, height=500)
 
         # Labels and Entry fields with StringVar() bindings
         
         
 
-        Label(left_frame, text="Name:", font=("times new roman", 12, "bold"), bg="white").grid(row=1, column=0, padx=10, pady=5, sticky=W)
-        self.txt_name = Entry(left_frame, font=("times new roman", 12, "bold"), width=20, textvariable=self.var_name)
+        Label(left_frame, text="Name:", font=("Helvetica", 12, "bold"), bg="white").grid(row=1, column=0, padx=10, pady=5, sticky=W)
+        self.txt_name = Entry(left_frame, font=("Helvetica", 12, "bold"), width=20, textvariable=self.var_name)
         self.txt_name.grid(row=1, column=1, padx=10, pady=5, sticky=W)
         
-        Label(left_frame, text="Roll:", font=("times new roman", 12, "bold"), bg="white").grid(row=0, column=2, padx=10, pady=5, sticky=W)
-        self.txt_roll = Entry(left_frame, font=("times new roman", 12, "bold"), width=20, textvariable=self.var_roll)
+        Label(left_frame, text="Roll:", font=("Helvetica", 12, "bold"), bg="white").grid(row=0, column=2, padx=10, pady=5, sticky=W)
+        self.txt_roll = Entry(left_frame, font=("Helvetica", 12, "bold"), width=20, textvariable=self.var_roll)
         self.txt_roll.grid(row=0, column=3, padx=10, pady=5, sticky=W)
 
-        Label(left_frame, text="Department:", font=("times new roman", 12, "bold"), bg="white").grid(row=1, column=2, padx=10, pady=5, sticky=W)
-        self.txt_dept = Entry(left_frame, font=("times new roman", 12, "bold"), width=20, textvariable=self.var_dept)
+        Label(left_frame, text="Department:", font=("Helvetica", 12, "bold"), bg="white").grid(row=1, column=2, padx=10, pady=5, sticky=W)
+        self.txt_dept = Entry(left_frame, font=("Helvetica", 12, "bold"), width=20, textvariable=self.var_dept)
         self.txt_dept.grid(row=1, column=3, padx=10, pady=5, sticky=W)
 
-        Label(left_frame, text="Time:", font=("times new roman", 12, "bold"), bg="white").grid(row=2, column=0, padx=10, pady=5, sticky=W)
-        self.txt_time = Entry(left_frame, font=("times new roman", 12, "bold"), width=20, textvariable=self.var_time)
+        Label(left_frame, text="Time:", font=("Helvetica", 12, "bold"), bg="white").grid(row=2, column=0, padx=10, pady=5, sticky=W)
+        self.txt_time = Entry(left_frame, font=("Helvetica", 12, "bold"), width=20, textvariable=self.var_time)
         self.txt_time.grid(row=2, column=1, padx=10, pady=5, sticky=W)
 
-        Label(left_frame, text="Date:", font=("times new roman", 12, "bold"), bg="white").grid(row=2, column=2, padx=10, pady=5, sticky=W)
-        self.txt_date = Entry(left_frame, font=("times new roman", 12, "bold"), width=20, textvariable=self.var_date)
+        Label(left_frame, text="Date:", font=("Helvetica", 12, "bold"), bg="white").grid(row=2, column=2, padx=10, pady=5, sticky=W)
+        self.txt_date = Entry(left_frame, font=("Helvetica", 12, "bold"), width=20, textvariable=self.var_date)
         self.txt_date.grid(row=2, column=3, padx=10, pady=5, sticky=W)
 
-        Label(left_frame, text="Attendance Status:", font=("times new roman", 12, "bold"), bg="white").grid(row=3, column=0, padx=10, pady=5, sticky=W)
-        self.combo_attendance = ttk.Combobox(left_frame, font=("times new roman", 12, "bold"), width=18, state="readonly", textvariable=self.var_status)
+        Label(left_frame, text="Attendance Status:", font=("Helvetica", 12, "bold"), bg="white").grid(row=3, column=0, padx=10, pady=5, sticky=W)
+        self.combo_attendance = ttk.Combobox(left_frame, font=("Helvetica", 12, "bold"), width=18, state="readonly", textvariable=self.var_status)
         self.combo_attendance["values"] = ("Status", "Present", "Absent")
         self.combo_attendance.current(0)
         self.combo_attendance.grid(row=3, column=1, padx=10, pady=5, sticky=W)
         button_frame = Frame(left_frame, bg="white")
         button_frame.place(x=10, y=400, width=630, height=70)
 
-        Button(button_frame, text="Import CSV",command=self.importCsv, font=("times new roman", 12, "bold"), bg="blue", fg="white", width=13).grid(row=0, column=0, padx=10, pady=10)
-        Button(button_frame, text="Export CSV",command=self.exportCsv, font=("times new roman", 12, "bold"), bg="blue", fg="white", width=13).grid(row=0, column=1, padx=10, pady=10)
-        Button(button_frame, text="Update", command=self.update,font=("times new roman", 12, "bold"), bg="blue", fg="white", width=13).grid(row=0, column=2, padx=10, pady=10)
-        Button(button_frame, text="Reset", command=self.reset_data,font=("times new roman", 12, "bold"), bg="blue", fg="white", width=13).grid(row=0, column=3, padx=10, pady=10)
+        Button(button_frame, text="Import CSV",command=self.importCsv, font=("Helvetica", 12, "bold"), bg="#3B82F6", fg="white", activebackground="#2563EB", activeforeground="white", bd=0, width=13).grid(row=0, column=0, padx=10, pady=10)
+        Button(button_frame, text="Export CSV",command=self.exportCsv, font=("Helvetica", 12, "bold"), bg="#3B82F6", fg="white", activebackground="#2563EB", activeforeground="white", bd=0, width=13).grid(row=0, column=1, padx=10, pady=10)
+        Button(button_frame, text="Update", command=self.update,font=("Helvetica", 12, "bold"), bg="#3B82F6", fg="white", activebackground="#2563EB", activeforeground="white", bd=0, width=13).grid(row=0, column=2, padx=10, pady=10)
+        Button(button_frame, text="Reset", command=self.reset_data,font=("Helvetica", 12, "bold"), bg="#3B82F6", fg="white", activebackground="#2563EB", activeforeground="white", bd=0, width=13).grid(row=0, column=3, padx=10, pady=10)
 
 
         # Right frame: Attendance Details
-        right_frame = LabelFrame(self.root, bd=2, relief=RIDGE, text="Attendance Details",
-                                 font=("times new roman", 12, "bold"), fg="black", bg="white")
+        right_frame = LabelFrame(self.root, bd=2, relief=SOLID, text="Attendance Details",
+                                 font=("Helvetica", 12, "bold"), fg="black", bg="white")
         right_frame.place(x=670, y=180, width=650, height=500)
 
         # Scrollable Table
@@ -131,7 +139,9 @@ class Attendance:
     def get_cursor(self, event):
         cursor_row = self.attendance_table.focus()
         contents = self.attendance_table.item(cursor_row)
-        row = contents["values"]
+        row = contents.get("values")
+        if not row:
+            return
         
         # Populate the entry fields with selected row data
         self.txt_attendance_id.delete(0, "end")
@@ -232,8 +242,8 @@ class Attendance:
             with mysql.connector.connect(
                 host='localhost',
                 user='root',
-                password='Nandini@24',
-                database='face'
+                password='1234',
+                database='face_recognition'
             ) as conn:
                 with conn.cursor() as cursor:
                 # Update query

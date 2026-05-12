@@ -6,51 +6,66 @@ import os
 class Developer:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1530x790+0+0")  # Fixed size for now
+        self.root.geometry("1530x790+0+0")
         self.root.title("Face Recognition System")
+        self.root.configure(bg="#F3F4F6")
         
-        # Title Label: Centered at the top
-        title_lbl = Label(self.root, text="DEVELOPER", font=("times new roman", 35, "bold"), bg="white", fg="blue")
-        title_lbl.place(x=0, y=0, width=1530, height=50)
+        # Header Label
+        title_lbl = Label(self.root, text="MEET THE DEVELOPER", font=("Helvetica", 26, "bold"), bg="#1F2937", fg="white", pady=10)
+        title_lbl.place(x=0, y=0, relwidth=1, height=70)
         
-        # Load and resize the background image
-        img_top = Image.open(r"C:\Users\Uday Bolla\OneDrive\Desktop\BTP NANDINI\smart-class-attendence-system\images\images\dev.png")
-        img_top = img_top.resize((1530, 745), Image.LANCZOS)
-        self.photoimg_top = ImageTk.PhotoImage(img_top)
+        base_dir = os.path.dirname(__file__)
+        img_dir = os.path.join(base_dir, "images", "images")
         
-        # Place the background image below the title label
-        f_lbl = Label(self.root, image=self.photoimg_top)
-        f_lbl.place(x=0, y=50, width=1530, height=740)
+        # Load Background Image
+        try:
+            img_top = Image.open(os.path.join(img_dir, "dev.png"))
+            img_top = img_top.resize((1530, 720), Image.LANCZOS)
+            self.photoimg_top = ImageTk.PhotoImage(img_top)
+            
+            f_lbl = Label(self.root, image=self.photoimg_top)
+            f_lbl.place(x=0, y=70, relwidth=1, height=720)
+        except:
+            f_lbl = Frame(self.root, bg="#F3F4F6")
+            f_lbl.place(x=0, y=70, relwidth=1, height=720)
+            
+        # Semi-transparent overlay or solid card for developer info
+        card_frame = Frame(f_lbl, bg="white", highlightbackground="#D1D5DB", highlightthickness=1)
+        card_frame.place(relx=0.5, rely=0.5, anchor=CENTER, width=650, height=480)
         
-        # Frame for developer info - centered in the middle of the window
-        frame_width = 600
-        frame_height = 350
-        center_x = (self.root.winfo_screenwidth() - frame_width) // 2
-        center_y = (self.root.winfo_screenheight() - frame_height) // 2
+        # Add a top border color accent to the card
+        accent = Frame(card_frame, bg="#3B82F6")
+        accent.place(x=0, y=0, relwidth=1, height=8)
+
+        # Developer Image
+        try:
+            # You can change 'dev.png' to an actual profile picture file if available
+            img_dev = Image.open(os.path.join(img_dir, "dev.png")) 
+            img_dev = img_dev.resize((160, 160), Image.LANCZOS)
+            self.photoimg_dev = ImageTk.PhotoImage(img_dev)
+            
+            # Using a solid border around the image to make it stand out
+            img_lbl = Label(card_frame, image=self.photoimg_dev, bg="white", bd=3, relief=SOLID)
+            img_lbl.place(relx=0.5, y=130, anchor=CENTER)
+        except Exception as e:
+            print(f"Image not found: {e}")
+
+        # Developer Details
+        name_lbl = Label(card_frame, text="Revanth Kumar", font=("Helvetica", 32, "bold"), fg="#111827", bg="white")
+        name_lbl.place(relx=0.5, y=260, anchor=CENTER)
         
-        # Developer info frame
-        main_frame = Frame(f_lbl, bd=2, bg="white", relief=RIDGE)
-        main_frame.place(x=center_x, y=center_y, width=frame_width, height=frame_height)
+        # Professional tag or short bio
+        bio_lbl = Label(card_frame, text="Creator & Lead Developer", font=("Helvetica", 14, "italic"), fg="#3B82F6", bg="white")
+        bio_lbl.place(relx=0.5, y=310, anchor=CENTER)
         
-        # Load and resize the developer's image
-        img_dev = Image.open(r"C:\Users\Uday Bolla\Downloads\WhatsApp Image 2024-11-23 at 19.19.44_0a185cb2.jpg")
-        img_dev = img_dev.resize((150, 150), Image.LANCZOS)
-        self.photoimg_dev = ImageTk.PhotoImage(img_dev)
+        # Description
+        desc = "Driving the Smart Class Attendance System project.\nPassionate about building scalable and impactful software solutions."
+        desc_lbl = Label(card_frame, text=desc, font=("Helvetica", 12), fg="#4B5563", bg="white", justify=CENTER)
+        desc_lbl.place(relx=0.5, y=370, anchor=CENTER)
         
-        # Place the developer's image inside the frame
-        img_lbl = Label(main_frame, image=self.photoimg_dev, bg="white")
-        img_lbl.place(x=225, y=30, width=150, height=150)
-        
-        # Developer information text
-        dev_label = Label(main_frame, text="Hello, my name is Nandini", font=("times new roman", 20, "bold"), fg="blue", bg="white")
-        dev_label.place(x=120, y=200)
-        
-        dev_info = Label(main_frame, text="pre-final year student at RGIPT ", font=("times new roman", 15), fg="black", bg="white")
-        dev_info.place(x=160, y=240)
-        
-        # Add an additional section for a description
-        dev_desc = Label(main_frame, text="currently working on smart class attendence project", font=("times new roman", 15), fg="green", bg="white")
-        dev_desc.place(x=130, y=270)
+        # Optional contact / link info
+        contact_lbl = Label(card_frame, text="revanthyadavg05@gmail.com", font=("Helvetica", 12, "bold"), fg="#6B7280", bg="white")
+        contact_lbl.place(relx=0.5, y=430, anchor=CENTER)
 
 if __name__ == "__main__":
     root = Tk()

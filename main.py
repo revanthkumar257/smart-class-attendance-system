@@ -1,137 +1,153 @@
 from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from student import Student
-from developer import Developer
-from help import Help
+
 from time import strftime
 from datetime import datetime
+
+from developer import Developer
+from help import Help
 from train import  Train
 from attendance import Attendance
 from face_recognition import Face_Recognition
+from student import Student
 import os
 
 class FACE_RECOGNITION:
     def __init__(self, root):
         self.root = root
         self.root.geometry("1530x790+0+0")
-        self.root.title("Face Recognition System")
+        self.root.title("Smart Class Attendance System")
+        self.root.configure(bg="#F3F4F6")
 
-        # Load and resize images
-        self.photoimg1 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\1.jpg", (500, 130))
-        self.photoimg2 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\2.jpeg", (500, 130))
-        self.photoimg3 = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\3.jpeg", (500, 130))
-        self.photoimg_bg = self.load_image(r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\4.jpg", (1530, 710))
+        base_dir = os.path.dirname(__file__)
+        img_dir = os.path.join(base_dir, "images", "images")
 
-        # Display header images
-        if self.photoimg1: Label(self.root, image=self.photoimg1).place(x=0, y=0, width=500, height=130)
-        if self.photoimg2: Label(self.root, image=self.photoimg2).place(x=500, y=0, width=500, height=130)
-        if self.photoimg3: Label(self.root, image=self.photoimg3).place(x=1000, y=0, width=530, height=130)
-
-        # Display background image
-        bg_img = Label(self.root, image=self.photoimg_bg)
-        bg_img.place(x=0, y=130, width=1530, height=710)
+        # Header Frame
+        header_frame = Frame(self.root, bg="#1F2937")
+        header_frame.place(x=0, y=0, relwidth=1, height=80)
 
         # Title label
-        title_lbl = Label(bg_img, text="SMART CLASS ATTENDANCE SYSTEM", font=("times new roman", 35, "bold"), bg="white", fg="red")
-        title_lbl.place(x=0, y=0, width=1530, height=45)
+        title_lbl = Label(header_frame, text="SMART CLASS ATTENDANCE SYSTEM", font=("Helvetica", 28, "bold"), bg="#1F2937", fg="white")
+        title_lbl.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-        # ===================== Time =======================
-        def time():
-            string = strftime('%H:%M:%S %p')
-            lbl.config(text=string)
-            lbl.after(1000, time)
-        
-        lbl = Label(title_lbl, font=('times new roman', 14, 'bold'), background='white', foreground='blue')
-        lbl.place(x=0, y=0, width=110, height=50)
-        time()
+        # Time Label
+        self.lbl_time = Label(header_frame, font=('Helvetica', 16, 'bold'), bg='#1F2937', fg='#9CA3AF')
+        self.lbl_time.place(x=20, rely=0.5, anchor=W)
+        self.time()
 
-        # Create buttons
-        self.create_buttons(bg_img)
+        # Try to load a nice background, otherwise keep it flat
+        try:
+            bg_image = Image.open(os.path.join(img_dir, "4.jpg"))
+            # Make it slightly opaque or darker to make buttons pop
+            bg_image = bg_image.resize((self.root.winfo_screenwidth(), self.root.winfo_screenheight()-80), Image.LANCZOS)
+            self.photoimg_bg = ImageTk.PhotoImage(bg_image)
+            bg_lbl = Label(self.root, image=self.photoimg_bg)
+            bg_lbl.place(x=0, y=80, relwidth=1, relheight=1)
+        except:
+            bg_lbl = Frame(self.root, bg="#F3F4F6")
+            bg_lbl.place(x=0, y=80, relwidth=1, relheight=1)
+
+        # Create centered grid for buttons
+        grid_frame = Frame(bg_lbl, bg="white", highlightbackground="#D1D5DB", highlightthickness=1)
+        grid_frame.place(relx=0.5, rely=0.5, anchor=CENTER, width=900, height=550)
+
+        # Title inside grid
+        Label(grid_frame, text="Dashboard", font=("Helvetica", 24, "bold"), bg="white", fg="#111827").place(relx=0.5, y=40, anchor=CENTER)
+
+        self.create_buttons(grid_frame)
+
+    def time(self):
+        string = strftime('%H:%M:%S %p')
+        self.lbl_time.config(text=string)
+        self.lbl_time.after(1000, self.time)
 
     def load_image(self, path, size):
-        """Load and resize image."""
         if not os.path.exists(path):
-            messagebox.showerror("Error", f"File not found: {path}")
             return None
-        img = Image.open(path).resize(size, Image.Resampling.LANCZOS)  # Updated for new Pillow versions
+        img = Image.open(path).resize(size, Image.LANCZOS)
         return ImageTk.PhotoImage(img)
 
-    def create_buttons(self, bg_img):
-        """Create all the buttons on the main screen."""
+    def create_buttons(self, parent):
+        base_dir = os.path.dirname(__file__)
+        img_dir = os.path.join(base_dir, "images", "images")
+        
         button_config = [
-            ("Student Details", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\student.jpg", self.student_details),
-            ("Face Detector", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\face2.jpeg", self.face_data),
-            ("Attendance", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\6.jpeg", self.attendance),
-            ("Help Desk", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\7.png", self.help),
-            ("Train Data", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\8.jpeg", self.train_data),
-            ("Photos", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\9.jpeg",self.open_img),
-            ("Developer", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\10.jpeg", self.developer),
-            ("Exit", r"C:\Users\Uday Bolla\OneDrive\Desktop\images\images\11.jpeg", self.exit_system)
+            ("Student Details", os.path.join(img_dir, "student.jpg"), self.student_details),
+            ("Face Detector", os.path.join(img_dir, "face2.jpeg"), self.face_data),
+            ("Attendance", os.path.join(img_dir, "6.jpeg"), self.attendance),
+            ("Help Desk", os.path.join(img_dir, "7.png"), self.help),
+            ("Train Data", os.path.join(img_dir, "8.jpeg"), self.train_data),
+            ("Photos", os.path.join(img_dir, "9.jpeg"), self.open_img),
+            ("Developer", os.path.join(img_dir, "10.jpeg"), self.developer),
+            ("Exit", os.path.join(img_dir, "11.jpeg"), self.exit_system)
         ]
 
-        # Button layout
-        x, y = 100, 100
+        # Button layout inside the grid_frame (width 900, height 550)
+        start_x = 75
+        start_y = 90
+        x, y = start_x, start_y
         for i, (text, img_path, command) in enumerate(button_config):
             if i == 4:  # Move to next row
-                x, y = 100, 300
-            self.create_button(bg_img, img_path, text, x, y, command)
-            x += 260
+                x, y = start_x, start_y + 220
+            self.create_card_button(parent, img_path, text, x, y, command)
+            x += 195
 
-    def create_button(self, bg_img, img_path, text, x, y, command):
-        """Create a button with image and text."""
-        img = self.load_image(img_path, (150, 150))
+    def create_card_button(self, parent, img_path, text, x, y, command):
+        """Create a styled button card."""
+        card = Frame(parent, bg="#F9FAFB", highlightbackground="#E5E7EB", highlightthickness=1)
+        card.place(x=x, y=y, width=160, height=190)
+        
+        img = self.load_image(img_path, (120, 120))
         if img:
-            btn = Button(bg_img, image=img, cursor="hand2", command=command)
-            btn.image = img  # Keep a reference to the image
-            btn.place(x=x, y=y, width=160, height=160)
-            Button(bg_img, text=text, command=command, font=("times new roman", 10, "bold"), bg="white", fg="red").place(x=x, y=y + 160, width=160, height=30)
+            btn = Button(card, image=img, cursor="hand2", command=command, bd=0, bg="#F9FAFB", activebackground="#F3F4F6")
+            btn.image = img
+            btn.place(relx=0.5, y=70, anchor=CENTER)
+            
+        Button(card, text=text, command=command, font=("Helvetica", 11, "bold"), bg="#3B82F6", fg="white", bd=0, cursor="hand2", activebackground="#2563EB", activeforeground="white").place(x=0, y=150, width=160, height=40)
 
     # Button actions
     def open_img(self):
         os.startfile("data")
 
-
     def student_details(self):
         if hasattr(self, 'student_window') and self.student_window.winfo_exists():
-            self.student_window.lift()  # Bring the existing window to the front
+            self.student_window.lift()
         else:
             self.student_window = Toplevel(self.root)
             self.app = Student(self.student_window)
 
-    def face_detector(self):
-        messagebox.showinfo("Info", "Face Detector functionality not implemented")
+    def face_data(self):
+        if hasattr(self, 'face_window') and self.face_window.winfo_exists():
+            self.face_window.lift()
+        else:
+            self.face_window = Toplevel(self.root)
+            self.app = Face_Recognition(self.face_window)
 
     def attendance(self):
         if hasattr(self, 'attendance_window') and self.attendance_window.winfo_exists():
-            self.attendance_window.lift()  # Bring the existing window to the front
+            self.attendance_window.lift()
         else:
             self.attendance_window = Toplevel(self.root)
             self.app = Attendance(self.attendance_window)
-        messagebox.showinfo("Info", "Attendance functionality not implemented")
 
     def help(self):
         if hasattr(self, 'help_window') and self.help_window.winfo_exists():
-            self.help_window.lift()  # Bring the existing window to the front
+            self.help_window.lift()
         else:
             self.help_window = Toplevel(self.root)
             self.app = Help(self.help_window)
 
     def train_data(self):
-        self.help_window = Toplevel(self.root)
-        self.app = Train(self.help_window)
-    
-    def face_data(self):
-        self.help_window = Toplevel(self.root)
-        self.app = Face_Recognition(self.help_window)
-        
-
-    def photos(self):
-        messagebox.showinfo("Info", "Photos functionality not implemented")
+        if hasattr(self, 'train_window') and self.train_window.winfo_exists():
+            self.train_window.lift()
+        else:
+            self.train_window = Toplevel(self.root)
+            self.app = Train(self.train_window)
 
     def developer(self):
         if hasattr(self, 'developer_window') and self.developer_window.winfo_exists():
-            self.developer_window.lift()  # Bring the existing window to the front
+            self.developer_window.lift()
         else:
             self.developer_window = Toplevel(self.root)
             self.app = Developer(self.developer_window)
